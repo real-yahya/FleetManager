@@ -8,10 +8,17 @@ import vehicleRouter from './routes/vehicles.routes.js';
 
 
 const app = express();
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+
+
 app.use('/api/v1/vehicles', vehicleRouter)
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded());
-// app.use(cors());
+
+
+
+
 
 
 app.listen(PORT, async ()=> {

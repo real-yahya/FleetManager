@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import VehicleCard from './components/VehicleCard.jsx';
+import CreateButton from './components/CreateButton.jsx';
 
 const API = 'http://localhost:5000';
 
@@ -39,6 +40,7 @@ export default function App() {
           <p className='mt-2 text-gray-600'>
             Live fleet overview — lease, fuel, mileage.
           </p>
+          <CreateButton className="mt-2"></CreateButton>
         </header>
 
         {errorMsg && (

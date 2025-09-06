@@ -1,12 +1,310 @@
-import React from 'react'
+import React, { useState } from "react";
+import { FaPlus } from "react-icons/fa6";
+import * as Dialog from "@radix-ui/react-dialog";
 
-const CreateButton = () => {
+const CreateButton = ({onSuccess}) => {
+  const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    const payload = Object.fromEntries(new FormData(e.currentTarget)); // { reg, make, ... }
+
+    try {
+      setSubmitting(true);
+      const res = await fetch("http://localhost:5000/api/v1/vehicles/newVehicle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || data?.error || "Failed to save");
+      }
+      onSuccess();
+
+      setOpen(false); // close on success
+      e.currentTarget.reset();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <button className='border px-5 py-2.5 rounded-2xl bg-blue-500 text-white hover:shadow-md transition duration-300'>
-    <i class="fas fa-plus" ></i>
-    <span className="ml-2">Create new vehicle</span>
-    </button>
-  )
-}
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button className="border text-lg px-4 py-2.5 rounded-3xl bg-blue-500 text-white hover:shadow-sm transition duration-300">
+          <FaPlus className="inline mb-1" />
+          <span className="ml-2">Create new vehicle</span>
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="radix-overlay" />
+        <Dialog.Content className="radix-content">
+          <Dialog.Title className="font-bold text-center text-2xl">
+            Add vehicle
+          </Dialog.Title>
 
-export default CreateButton
+          <Dialog.Description className="text-center text-gray-600">
+            Fill the details and save.
+          </Dialog.Description>
+
+          <form
+            onSubmit={onSubmit}
+            style={{ display: "grid", gap: 10, marginTop: 12 }}
+          >
+            
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {/* Registration */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="reg"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Registration
+                </label>
+                <input
+                  id="reg"
+                  name="reg"
+                  type="text"
+                  required
+                  placeholder="AB19 XYZ"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Make */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="make"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Make
+                </label>
+                <input
+                  id="make"
+                  name="make"
+                  required
+                  placeholder="Volkswagen"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Model */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="model"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Model
+                </label>
+                <input
+                  id="model"
+                  name="model"
+                  required
+                  placeholder="Golf TDI"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Lease Company */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="leaseCompany"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Lease Company
+                </label>
+                <input
+                  id="leaseCompany"
+                  name="leaseCompany"
+                  required
+                  placeholder="LeasePlan UK"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Lease End Date */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="leaseEndDate"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Lease End Date
+                </label>
+                <input
+                  id="leaseEndDate"
+                  name="leaseEndDate"
+                  type="date"
+                  required
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Current Location */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Current Location
+                </label>
+                <input
+                  id="location"
+                  name="location"
+                  placeholder="Leicester"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              {/* Last Valet */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="lastValet"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Last Valet
+                </label>
+                <input
+                  id="lastValet"
+                  name="lastValet"
+                  type="date"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Mileage */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="mileage"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Mileage
+                </label>
+                <input
+                  id="mileage"
+                  name="mileage"
+                  type="number"
+                  min={0}
+                  step={1}
+                  required
+                  placeholder="45200"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Fuel */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="fuel"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Fuel (+Charge) %
+                </label>
+                <input
+                  id="fuel"
+                  name="fuel"
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={1}
+                  required
+                  placeholder="50"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Powertrain */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="powertrain"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Powertrain
+                </label>
+                <select
+                  id="powertrain"
+                  name="powertrain"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  defaultValue="diesel"
+                  required
+                >
+                  <option value="petrol">Petrol</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="hybrid">Hybrid</option>
+                  <option value="electric">Electric</option>
+                  <option value="unknown">Unknown</option>
+                </select>
+              </div>
+
+              {/* Gearbox */}
+              <div className="space-y-1">
+                <label
+                  htmlFor="gearbox"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Gearbox
+                </label>
+                <select
+                  id="gearbox"
+                  name="gearbox"
+                  className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  defaultValue="manual"
+                  required
+                >
+                  <option value="manual">Manual</option>
+                  <option value="automatic">Automatic</option>
+                  <option value="unknown">Unknown</option>
+                </select>
+              </div>
+            </div>
+
+            {error && <p style={{ color: "crimson" }}>{error}</p>}
+
+            {/* Actions */}
+            <div className="mt-6 flex justify-end gap-3">
+              <Dialog.Close asChild>
+                <button
+                  type="button"
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              </Dialog.Close>
+
+              <button
+                type="submit"
+                className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                disabled={submitting}
+              >
+                {submitting ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </form>
+
+          <Dialog.Close asChild>
+            <button
+              aria-label="Close"
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                border: 0,
+                background: "transparent",
+              }}
+            >
+              ✕
+            </button>
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+
+export default CreateButton;

@@ -40,7 +40,10 @@ export default function App() {
           <p className='mt-2 text-gray-600'>
             Live fleet overview — lease, fuel, mileage.
           </p>
-          <CreateButton className="mt-2"></CreateButton>
+          <div className='mt-3 flex justify-end'> 
+            <CreateButton className="" onSuccess={fetchVehicles}/>
+          </div>
+          
         </header>
 
         {errorMsg && (

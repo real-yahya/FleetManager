@@ -88,7 +88,7 @@ const vehicleSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
         enum: ['automatic', 'manual', 'unknown'],
-        default: unknown
+        default: unknown,
         set: v => String(v).trim().toLowerCase().replace(/^auto$/, 'automatic'),
     }
 },{

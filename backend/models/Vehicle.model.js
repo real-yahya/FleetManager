@@ -1,55 +1,70 @@
 import mongoose from "mongoose";
+import { maxLength, unknown, uppercase } from "zod";
 
 const vehicleSchema = new mongoose.Schema({
     // Registration (text)
     regNumber: {
         type: String,
         required: true,
+        uppercase: true,
         trim: true,
-        match: [/^[A-Z0-9 -]{1,8}$/i, 'Invalid registration format'],
+        match: [/^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$/, 'Invalid UK registration number format'],
     },
     make: {
         type: String,
         required: true,
         trim: true,
+        uppercase:true,
         minlength: 2,
-        maxlength: 50,
+        maxlength: 50
     },
     model: {
         type: String,
         required: true,
         trim: true,
+        uppercase:true,
         minlength: 1,
         maxlength: 60,
     },
     regNormalized: { 
         type: String, 
-        required: true, 
+        required: true,
+        unique: true,
+        uppercase: true,
         select: false 
     },
     leaseCompany:{
         type:String,
         required:true,
-        trim: true
+        trim: true,
+        maxLength: 100,
+        uppercase: true
     },
     leaseEndDate:{
         type:Date,
         required:true,
-        validate: v => v instanceof Date && !isNaN(v)
+        validate: {
+            validator: v => v instanceof Date && Number.isFinite(v.getTime()),
+            message: 'Lease end date must be a valid date'
+        }
     },
     location:{
         type:String,
         required:false,
         trim:true
     },
-    lastValet:{
-        type:Date,
+    lastValet: {
+        type: Date,
         default: null,
-        validate: v => !v || v <= new Date()
+        max: [Date.now, 'Last valet date must be in the past or today'],
+        validate: {
+          validator: v => v == null || (v instanceof Date && Number.isFinite(v.getTime())),
+          message: 'Last valet must be a valid date'
+        }
     },
     mileage:{
         type:Number,
-        required:true, 
+        required:true,
         min: 0, 
         set: v => Math.round(v)
     },
@@ -59,36 +74,37 @@ const vehicleSchema = new mongoose.Schema({
         min: 0, max: 100,
         set: v => Math.round(v)
     },
-    
     powertrain: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-      enum: ['electric','hybrid','petrol','diesel', 'unknown'],
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+        enum: ['electric','hybrid','petrol','diesel','unknown'],
+        default: unknown
     },
-
     gearbox: {
-      type: String,
-      required: true,
-      lowercase: true, 
-      trim: true,
-      enum: ['automatic', 'manual', 'unknown'],
-      set: v => String(v).trim().toLowerCase().replace(/^auto$/, 'automatic'),
-    },
-        
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+        enum: ['automatic', 'manual', 'unknown'],
+        default: unknown
+        set: v => String(v).trim().toLowerCase().replace(/^auto$/, 'automatic'),
+    }
 },{
     timestamps: true,
-    versionKey: false,          // hide __v
-    toJSON: { virtuals: true }, // include virtuals when JSONifying
+    versionKey: false,
+    toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
 
-
+function normalizeReg(reg) {
+  return String(reg || '').replace(/\s+/g, '').toUpperCase();
+}
 
 vehicleSchema.pre('validate', function(next) {
-  if (this.regNumber) {
-    this.regNormalized = this.regNumber.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  if (this.isModified('regNumber') || this.isNew) {
+    this.regNormalized = normalizeReg(this.regNumber);
   }
   next();
 });

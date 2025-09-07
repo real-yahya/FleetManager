@@ -37,14 +37,14 @@ const CreateButton = ({onSuccess}) => {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button className="border text-lg px-4 py-2.5 rounded-3xl bg-blue-500 text-white hover:shadow-sm transition duration-300">
+        <button className="border text-lg px-4 py-2.5 rounded-xl bg-blue-500 text-white hover:shadow-sm transition duration-300">
           <FaPlus className="inline mb-1" />
           <span className="ml-2">Create new vehicle</span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="radix-overlay" />
-        <Dialog.Content className="radix-content">
+        <Dialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.45)] backdrop-blur-[3px]" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 bg-white rounded-xl py-[42px] px-[34px] w-[700px] h-auto shadow-[0_10px_10px_rgba(0,0,0,0.2)">
           <Dialog.Title className="font-bold text-center text-2xl">
             Add vehicle
           </Dialog.Title>
@@ -55,7 +55,7 @@ const CreateButton = ({onSuccess}) => {
 
           <form
             onSubmit={onSubmit}
-            style={{ display: "grid", gap: 10, marginTop: 12 }}
+            style={{ display: "grid", gap: 10, marginTop: 24 }}
           >
             
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -267,7 +267,7 @@ const CreateButton = ({onSuccess}) => {
             {error && <p style={{ color: "crimson" }}>{error}</p>}
 
             {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-2 flex justify-end gap-3">
               <Dialog.Close asChild>
                 <button
                   type="button"
@@ -287,20 +287,7 @@ const CreateButton = ({onSuccess}) => {
             </div>
           </form>
 
-          <Dialog.Close asChild>
-            <button
-              aria-label="Close"
-              style={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                border: 0,
-                background: "transparent",
-              }}
-            >
-              ✕
-            </button>
-          </Dialog.Close>
+          
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

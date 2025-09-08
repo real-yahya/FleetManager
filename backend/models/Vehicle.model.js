@@ -98,16 +98,22 @@ const vehicleSchema = new mongoose.Schema({
 });
 
 function normalizeReg(reg) {
-  return String(reg || '').replace(/\s+/g, '').toUpperCase();
+  return String(reg ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, ''); // removes spaces, dashes, etc.
 }
 
-vehicleSchema.pre('validate', function(next) {
-  if (this.isModified('regNumber') || this.isNew) {
-    this.regNormalized = normalizeReg(this.regNumber);
+vehicleSchema.pre('validate', function (next) {
+  if (this.isNew || this.isModified('regNumber')) {
+    const raw = this.regNumber;
+    if (typeof raw === 'string' && raw.trim()) {
+      this.regNormalized = normalizeReg(raw);
+    } else {
+      this.regNormalized = undefined; // let "required" on regNormalized fire cleanly
+    }
   }
   next();
 });
-
 // // Indexes (for speed/uniqueness)
 // VehicleSchema.index({ regNormalized: 1 }, { unique: true });
 // VehicleSchema.index({ leaseEndDate: 1 });

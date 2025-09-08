@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { maxLength, unknown, uppercase } from "zod";
 
 const vehicleSchema = new mongoose.Schema({
     // Registration (text)
@@ -80,7 +79,7 @@ const vehicleSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
         enum: ['electric','hybrid','petrol','diesel','unknown'],
-        default: unknown
+        default: 'unknown'
     },
     gearbox: {
         type: String,
@@ -88,7 +87,7 @@ const vehicleSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
         enum: ['automatic', 'manual', 'unknown'],
-        default: unknown,
+        default: 'unknown',
         set: v => String(v).trim().toLowerCase().replace(/^auto$/, 'automatic'),
     }
 },{

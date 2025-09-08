@@ -60,10 +60,18 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
             regNormalized,
         });
 
+
+
         res.status(201).json({message: 'Vehicle succesfully created.'})
 
     } catch (error) {
-        console.error('[PUT /vehicles]', error);
+        console.error('[POST /newVehicle]', err);
+        if (error?.code === 11000 && (error?.keyPattern?.regNormalized || error?.keyValue?.regNormalized)) {
+            return res.status(409).json({
+            error: 'Conflict',
+            errors: { regNumber: ['A vehicle with this registration already exists'] }
+        });
+  }
         return res.status(500).json({ error: 'Failed to create vehicle' });
     }
 })

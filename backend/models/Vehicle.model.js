@@ -97,6 +97,8 @@ const vehicleSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
+vehicleSchema.index({ regNormalized: 1 }, { unique: true });
+
 function normalizeReg(reg) {
   return String(reg ?? '')
     .toUpperCase()

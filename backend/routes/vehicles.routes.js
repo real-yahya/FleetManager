@@ -35,12 +35,15 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
             gearbox: req.body.gearbox,
         });
 
-        if(!result.success){
+        if (!result.success) {
+            console.log("Printing error...")
+            var error_dict = JSON.parse(result.error.message)[0]
+            console.log(error_dict);
             return res.status(400).json({
-                error: 'ValidationError',
+                error: error_dict.message,
                 details: result.error.issues.map(e => ({
                     path: e.path.join('.'),
-                    message: e.message
+                    error: e.message
                 }))
             })
         }
@@ -65,7 +68,7 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
         res.status(201).json({message: 'Vehicle succesfully created.'})
 
     } catch (error) {
-        console.error('[POST /newVehicle]', err);
+        console.error('[POST /newVehicle]', error);
         if (error?.code === 11000 && (error?.keyPattern?.regNormalized || error?.keyValue?.regNormalized)) {
             return res.status(409).json({
             error: 'Conflict',

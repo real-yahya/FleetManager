@@ -14,13 +14,14 @@ const CreateButton = ({onSuccess}) => {
 
     try {
       setSubmitting(true);
-      const res = await fetch("http://localhost:5000/api/v1/vehicles/newVehicle", {
+      const res = await fetch("http://localhost:5001/api/v1/vehicles/newVehicle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        console.log(data);
         throw new Error(data?.message || data?.error || "Failed to save");
       }
       onSuccess();

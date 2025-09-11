@@ -5,9 +5,9 @@ const REG_PLATE = /^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$/;
 const emptyToUndef = (v) => (v === "" ? undefined : v);
 
 const vehicleZod = z.object({
-    regNumber: z.string().transform(s => s.toUpperCase().trim()).regex(REG_PLATE, 'Invalid UK registration number format - ZOD'),
-    make: z.string().transform(s => s.toUpperCase().trim()).min(2).max(50),
-    model: z.string().transform(s => s.toUpperCase().trim()).min(1).max(60),
+    regNumber: z.string().transform(s => s.toUpperCase().trim().regex(REG_PLATE, 'Invalid UK registration number format - ZOD')),
+    make: z.string().min(2).max(50).transform(s => s.toUpperCase().trim()),
+    model: z.string().min(1).max(60).transform(s => s.toUpperCase().trim()),
     leaseCompany: z.string().trim().max(100),
     leaseEndDate: z.coerce.date(),
     location: z.string().trim().optional(),

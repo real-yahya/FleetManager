@@ -36,9 +36,7 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
         });
 
         if (!result.success) {
-            console.log("Printing error...")
             var error_dict = JSON.parse(result.error.message)[0]
-            console.log(error_dict);
             return res.status(400).json({
                 error: error_dict.message,
                 details: result.error.issues.map(e => ({

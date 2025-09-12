@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { minLength } from "zod";
 
 const vehicleSchema = new mongoose.Schema({
     // Registration (text)
@@ -36,6 +37,7 @@ const vehicleSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim: true,
+        minLength: 3,
         maxLength: 100,
         uppercase: true
     },

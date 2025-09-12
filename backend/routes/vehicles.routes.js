@@ -52,7 +52,7 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
         // check to see if vehicle exists
         const vehicle = await Vehicle.findOne({regNormalized})
         if(vehicle != null){
-            return res.status(409).json({ error: 'Vehicle exists' });
+            return res.status(409).json({ error: 'Vehicle already exists' });
         }
 
         // create new vehicle

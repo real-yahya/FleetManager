@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa6";
 import * as Dialog from "@radix-ui/react-dialog";
 
@@ -7,10 +7,20 @@ const CreateButton = ({onSuccess}) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+      if (open) {
+        setError(null);
+        setSubmitting(false);
+      }
+    }, [open]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    const form = e.currentTarget
     setError(null);
-    const payload = Object.fromEntries(new FormData(e.currentTarget)); // { reg, make, ... }
+    const payload = Object.fromEntries(new FormData(form));
+
+    
 
     try {
       setSubmitting(true);
@@ -25,9 +35,9 @@ const CreateButton = ({onSuccess}) => {
         throw new Error(data?.message || data?.error || "Failed to save");
       }
       onSuccess();
-
+      form?.reset();
       setOpen(false); // close on success
-      e.currentTarget.reset();
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -55,6 +65,7 @@ const CreateButton = ({onSuccess}) => {
           </Dialog.Description>
 
           <form
+            noValidate
             onSubmit={onSubmit}
             style={{ display: "grid", gap: 10, marginTop: 24 }}
           >
@@ -72,6 +83,7 @@ const CreateButton = ({onSuccess}) => {
                   id="reg"
                   name="reg"
                   type="text"
+                  title="Please enter a valid UK registration."
                   required
                   placeholder="AB19 XYZ"
                   className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"

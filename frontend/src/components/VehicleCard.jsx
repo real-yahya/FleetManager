@@ -99,7 +99,7 @@ const VehicleCard = ({vehicle}) => {
 
       <div className='mt-4'>
         <div className='mb-1 flex items-center justify-between text-xs text-gray-600'>
-            <span>Fuel</span><span>{fuelPct}%</span>
+            <span>Fuel</span><span>{fuelPct || '??'}%</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={fuelPct}>
           <div className="h-2 rounded-full bg-emerald-500 transition-all" style={{ width: `${fuelPct}%` }} />

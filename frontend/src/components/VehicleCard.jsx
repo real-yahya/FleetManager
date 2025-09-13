@@ -75,6 +75,29 @@ const VehicleCard = ({ vehicle }) => {
   const ptClass = badgePowertrain[powertrain] || badgePowertrain.unknown;
   const gbClass = badgeGearbox[gearbox] || badgeGearbox.unknown;
 
+  const deleteVehicle = async () => {
+    const URL = 'http://localhost:5001/api/v1/vehicles/deleteVehicle';
+    try {
+      const response = await fetch(URL, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify({
+          regNumber: regNumber
+        })
+      })
+      if(!response.ok){
+        throw new Error(`Response Status: ${response.status}`);
+      }
+      // const result = await response.json();
+      // console.log(result);
+    } catch (error) {
+      // throw new Error("Error in frontend deleting vehicle!",error);
+      console.log(error);
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 hover:shadow-md transition">
       <div className="flex items-start justify-between gap-4">
@@ -121,21 +144,17 @@ const VehicleCard = ({ vehicle }) => {
               : `${Math.abs(dueIn)} days overdue`}
           </div>
 
-          <DropdownMenu.Root >
+         <DropdownMenu.Root >
             <DropdownMenu.Trigger>
-              {/* <Button variant="soft">
-                Options
-                <DropdownMenu.TriggerIcon />
-              </Button> */}
-              <button>
                 <div className="my-auto bg-gray-100 rounded-2xl px-1 py-1">
                   <CiMenuKebab className="" />
                 </div>
-              </button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              <DropdownMenu.Item shortcut="⌘ ⌫" color="red">
-                Delete
+            <DropdownMenu.Content className="bg-white-500 shadow-lg ring-1 ring-gray-300 hover:ring-red-500 w-24">
+              <DropdownMenu.Item shortcut="⌘ ⌫" onClick={deleteVehicle}>
+                <button className="text-red-400">
+                  Delete
+                </button>
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

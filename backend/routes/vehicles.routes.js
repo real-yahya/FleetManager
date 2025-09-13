@@ -77,9 +77,9 @@ vehicleRouter.post('/newVehicle', async (req,res) => {
     }
 })
 
-vehicleRouter.delete('/deleteVehicle', async (req, res) =>{
+vehicleRouter.delete('/:reg', async (req, res) =>{
     try{
-        const reg = req.regNumber;
+        const reg = req.params['reg'];
         const result = await Vehicle.deleteOne({regNumber: reg});
         res.status(204).json({message: result})
     }catch(error){

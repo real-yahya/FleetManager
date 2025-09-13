@@ -79,7 +79,7 @@ export default function App() {
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {vehicles.map(v => (
               <li key={v._id || v.regNumber}>
-                <VehicleCard vehicle={v} />
+                <VehicleCard vehicle={v} onSuccess={fetchVehicles} />
               </li>
             ))}
           </ul>

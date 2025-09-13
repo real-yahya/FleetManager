@@ -55,7 +55,7 @@ const leasePill = (days) =>
     ? "bg-amber-100 text-amber-700"
     : "bg-emerald-100 text-emerald-700";
 
-const VehicleCard = ({ vehicle }) => {
+const VehicleCard = ({ vehicle, onSuccess }) => {
   const {
     regNumber,
     make,
@@ -76,22 +76,18 @@ const VehicleCard = ({ vehicle }) => {
   const gbClass = badgeGearbox[gearbox] || badgeGearbox.unknown;
 
   const deleteVehicle = async () => {
-    const URL = 'http://localhost:5001/api/v1/vehicles/deleteVehicle';
+    const URL = `http://localhost:5001/api/v1/vehicles/${encodeURIComponent(regNumber)}`;
     try {
       const response = await fetch(URL, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json" 
-        },
-        body: JSON.stringify({
-          regNumber: regNumber
-        })
       })
       if(!response.ok){
         throw new Error(`Response Status: ${response.status}`);
       }
-      // const result = await response.json();
-      // console.log(result);
+      onSuccess();
+      const result = await response.json();
+      console.log(result);
+      
     } catch (error) {
       // throw new Error("Error in frontend deleting vehicle!",error);
       console.log(error);
@@ -145,16 +141,15 @@ const VehicleCard = ({ vehicle }) => {
           </div>
 
          <DropdownMenu.Root >
-            <DropdownMenu.Trigger>
-                <div className="my-auto bg-gray-100 rounded-2xl px-1 py-1">
-                  <CiMenuKebab className="" />
-                </div>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="bg-white-500 shadow-lg ring-1 ring-gray-300 hover:ring-red-500 w-24">
-              <DropdownMenu.Item shortcut="⌘ ⌫" onClick={deleteVehicle}>
-                <button className="text-red-400">
-                  Delete
+            <DropdownMenu.Trigger asChild>
+                <button className="my-auto bg-gray-100 rounded-2xl px-1 py-1">
+                  <CiMenuKebab/>
                 </button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content className="bg-white-500 shadow-lg ring-1 ring-gray-300 hover:ring-red-500 w-24"
+            aria-label="More Actions">
+              <DropdownMenu.Item shortcut="⌘ ⌫" onSelect={deleteVehicle} className="text-red-400">
+                Delete
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

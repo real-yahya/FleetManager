@@ -1,6 +1,6 @@
-import React from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { GiTrashCan } from "react-icons/gi";
 
 // const regPretty = (s) => {
 //   if (!s) return '—';
@@ -76,18 +76,19 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
   const gbClass = badgeGearbox[gearbox] || badgeGearbox.unknown;
 
   const deleteVehicle = async () => {
-    const URL = `http://localhost:5001/api/v1/vehicles/${encodeURIComponent(regNumber)}`;
+    const URL = `http://localhost:5001/api/v1/vehicles/${encodeURIComponent(
+      regNumber
+    )}`;
     try {
       const response = await fetch(URL, {
         method: "DELETE",
-      })
-      if(!response.ok){
+      });
+      if (!response.ok) {
         throw new Error(`Response Status: ${response.status}`);
       }
       onSuccess();
       const result = await response.json();
       console.log(result);
-      
     } catch (error) {
       // throw new Error("Error in frontend deleting vehicle!",error);
       console.log(error);
@@ -140,18 +141,35 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
               : `${Math.abs(dueIn)} days overdue`}
           </div>
 
-         <DropdownMenu.Root >
+          <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-                <button className="my-auto bg-gray-100 rounded-2xl px-1 py-1">
-                  <CiMenuKebab/>
-                </button>
+              <button className="focus:outline-none cursor-pointer hover:bg-gray-200 hover:ring-gray-400 focus-visible:outline-none my-auto bg-gray-100 rounded-2xl px-1 py-1 ring-1 ring-gray-300">
+                <CiMenuKebab />
+              </button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="bg-white-500 shadow-lg ring-1 ring-gray-300 hover:ring-red-500 w-24"
-            aria-label="More Actions">
-              <DropdownMenu.Item shortcut="⌘ ⌫" onSelect={deleteVehicle} className="text-red-400">
-                Delete
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
+            <DropdownMenu.DropdownMenuPortal>
+              <DropdownMenu.Content
+                className="group rounded-md px-1 bg-gray-100 shadow-lg border border-gray-300 has-[[data-highlighted]]:border-red-500 w-24 transition-colors"
+                aria-label="More Actions"
+                side="bottom"
+                align="end"
+                sideOffset={6}
+              >
+                <DropdownMenu.Item
+                  onSelect={deleteVehicle}
+                  className="hover:outline-none cursor-pointer text-red-400 hover:ring-red-400"
+                >
+                  <GiTrashCan className="inline " />
+                  Delete
+                </DropdownMenu.Item>
+                <DropdownMenu.DropdownMenuArrow
+                  className="
+      fill-gray-100 stroke-2 stroke-gray-300
+      [stroke-linejoin:round] [vector-effect:non-scaling-stroke]
+      transition-colors"
+                />
+              </DropdownMenu.Content>
+            </DropdownMenu.DropdownMenuPortal>
           </DropdownMenu.Root>
         </div>
       </div>

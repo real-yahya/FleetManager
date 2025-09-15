@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import VehicleCard from './components/VehicleCard.jsx';
 import CreateButton from './components/CreateButton.jsx';
+import SearchBar from './components/SearchBar.jsx';
 
 const API = 'http://localhost:5001';
 
@@ -40,11 +41,13 @@ export default function App() {
           <p className='mt-2 text-gray-600'>
             Live fleet overview — lease, fuel, mileage.
           </p>
-          <div className='mt-3 flex justify-end'> 
+            <div className='mt-3 flex justify-end'> 
+              <SearchBar/>
             <CreateButton className="" onSuccess={fetchVehicles}/>
           </div>
           
-        </header>
+          </header>
+        
 
         {errorMsg && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">

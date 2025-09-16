@@ -80,8 +80,10 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
   const ptClass = badgePowertrain[powertrain] || badgePowertrain.unknown;
   const gbClass = badgeGearbox[gearbox] || badgeGearbox.unknown;
 
+  const API = import.meta.env.VITE_API_URL 
+
   const deleteVehicle = async () => {
-    const URL = `http://localhost:5001/api/v1/vehicles/${encodeURIComponent(
+    const URL = `${API}/api/v1/vehicles/${encodeURIComponent(
       regNumber
     )}`;
     try {

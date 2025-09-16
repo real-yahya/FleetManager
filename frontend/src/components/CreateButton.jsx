@@ -21,10 +21,10 @@ const CreateButton = ({onSuccess}) => {
     const payload = Object.fromEntries(new FormData(form));
 
     
-
+    const API = import.meta.env.VITE_API_URL 
     try {
       setSubmitting(true);
-      const res = await fetch("http://localhost:5001/api/v1/vehicles/newVehicle", {
+      const res = await fetch(`${API}/api/v1/vehicles/newVehicle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

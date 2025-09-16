@@ -1,6 +1,8 @@
 import { CiMenuKebab } from "react-icons/ci";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { GiTrashCan } from "react-icons/gi";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { useState } from "react";
 
 // const regPretty = (s) => {
 //   if (!s) return '—';
@@ -56,6 +58,9 @@ const leasePill = (days) =>
     : "bg-emerald-100 text-emerald-700";
 
 const VehicleCard = ({ vehicle, onSuccess }) => {
+  const [dropDownMenu, setDropDownmenu] = useState(false);
+  const [alert, setAlert] = useState(false);
+
   const {
     regNumber,
     make,
@@ -93,7 +98,7 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
       // throw new Error("Error in frontend deleting vehicle!",error);
       console.log(error);
     }
-  }
+  };
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 hover:shadow-md transition">
@@ -141,9 +146,11 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
               : `${Math.abs(dueIn)} days overdue`}
           </div>
 
-          <DropdownMenu.Root>
+          
+
+          <DropdownMenu.Root open={dropDownMenu} onOpenChange={setDropDownmenu}>
             <DropdownMenu.Trigger asChild>
-              <button className="focus:outline-none cursor-pointer hover:bg-gray-200 hover:ring-gray-400 focus-visible:outline-none my-auto bg-gray-100 rounded-2xl px-1 py-1 ring-1 ring-gray-300">
+              <button className="focus:outline-none cursor-pointer hover:bg-gray-200 hover:ring-gray-400 focus-visible:outline-none my-auto bg-gray-100 rounded-full px-1 py-1 ring-1 ring-gray-300">
                 <CiMenuKebab />
               </button>
             </DropdownMenu.Trigger>
@@ -156,7 +163,12 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
                 sideOffset={6}
               >
                 <DropdownMenu.Item
-                  onSelect={deleteVehicle}
+                  // onSelect={deleteVehicle}
+                  onSelect={(e) => {
+                    e.preventDefault(); // stop the menu from auto-closing
+                    setDropDownmenu(false); // close it yourself
+                    setAlert(true); // open the confirm dialog
+                  }}
                   className="hover:outline-none cursor-pointer text-red-400 hover:ring-red-400"
                 >
                   <GiTrashCan className="inline " />
@@ -164,13 +176,46 @@ const VehicleCard = ({ vehicle, onSuccess }) => {
                 </DropdownMenu.Item>
                 <DropdownMenu.DropdownMenuArrow
                   className="
-      fill-gray-100 stroke-2 stroke-gray-300
-      [stroke-linejoin:round] [vector-effect:non-scaling-stroke]
-      transition-colors"
+                  fill-gray-100 stroke-2 stroke-gray-300
+                    [stroke-linejoin:round] [vector-effect:non-scaling-stroke]
+                    transition-colors"
                 />
               </DropdownMenu.Content>
             </DropdownMenu.DropdownMenuPortal>
           </DropdownMenu.Root>
+
+          <AlertDialog.Root open={alert} onOpenChange={setAlert}>
+            <AlertDialog.Portal>
+              <AlertDialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.45)] backdrop-blur-[3px]" />
+              <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 bg-white rounded-xl py-[42px] px-[34px] w-[700px] h-auto shadow-[0_10px_10px_rgba(0,0,0,0.2)">
+                <AlertDialog.Title className="font-bold text-center text-xl mb-6">
+                  Are you sure you want to delete this vehicle?
+                </AlertDialog.Title>
+                <AlertDialog.Description className="mb-6">
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </AlertDialog.Description>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <AlertDialog.Cancel asChild>
+                    <button type="button" class="text-black hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                      Cancel
+                    </button>
+                  </AlertDialog.Cancel>
+                  <AlertDialog.Action  asChild>
+                    <button type="button" onClick={deleteVehicle} class="cursor-pointer focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                      Yes, delete vehicle
+                    </button>
+                  </AlertDialog.Action>
+                </div>
+              </AlertDialog.Content>
+            </AlertDialog.Portal>
+          </AlertDialog.Root>
         </div>
       </div>
 

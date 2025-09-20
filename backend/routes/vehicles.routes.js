@@ -87,4 +87,14 @@ vehicleRouter.delete('/:reg', async (req, res) =>{
     }
 })
 
+vehicleRouter.get('/:reg', async (req, res) => {
+    try {
+        const reg = req.params['reg'];
+        const result = await Vehicle.find({regNumber: reg});
+        return res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 export default vehicleRouter;

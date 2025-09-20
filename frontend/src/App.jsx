@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import VehicleCard from './components/VehicleCard.jsx';
 import CreateButton from './components/CreateButton.jsx';
 import SearchBar from './components/SearchBar.jsx';
+import { FaSearchengin } from 'react-icons/fa';
+import {useDebounce} from "react-use";
 
 const API = `${import.meta.env.VITE_API_URL}`;
 
@@ -9,6 +11,11 @@ export default function App() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [debounceSearchValue, setDebounceSearchValue] = useState('')
+
+
+  useDebounce(()=> setDebounceSearchValue(searchValue), 500, [searchValue] )
 
   const fetchVehicles = async () => {
     try {
@@ -28,7 +35,33 @@ export default function App() {
     }
   };
 
+  const fetchVehiclesByReg = async (reg) => {
+    try {
+      
+      const res = await fetch(`${API}/api/v1/vehicles/${encodeURIComponent(reg)}`);
+      
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      console.log(data);
+
+      if (!Array.isArray(data)) throw new Error('Unexpected API response');
+      setVehicles(data);
+      setErrorMsg('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => { fetchVehicles(); }, []);
+
+  useEffect(() => {
+    if(debounceSearchValue == ''){
+      fetchVehicles();
+    }else{
+      fetchVehiclesByReg(debounceSearchValue);
+    }
+    
+  },[debounceSearchValue]);
 
   return (
     <>
@@ -43,7 +76,7 @@ export default function App() {
           </p>
           <div className='flex gap-3 mt-3'>
             <div className="flex-1">
-              <SearchBar ></SearchBar>
+              <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} onSuccess1={fetchVehiclesByReg}/>
             </div>
             <div className=''> 
               <CreateButton className="" onSuccess={fetchVehicles}/>

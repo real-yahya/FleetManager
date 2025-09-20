@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import VehicleCard from './components/VehicleCard.jsx';
 import CreateButton from './components/CreateButton.jsx';
+import SearchBar from './components/SearchBar.jsx';
 
 const API = `${import.meta.env.VITE_API_URL}`;
 
@@ -40,9 +41,15 @@ export default function App() {
           <p className='mt-2 text-gray-600'>
             Live fleet overview — lease, fuel, mileage.
           </p>
-          <div className='mt-3 flex justify-end'> 
-            <CreateButton className="" onSuccess={fetchVehicles}/>
+          <div className='flex gap-3 mt-3'>
+            <div className="flex-1">
+              <SearchBar ></SearchBar>
+            </div>
+            <div className=''> 
+              <CreateButton className="" onSuccess={fetchVehicles}/>
+            </div>
           </div>
+          
           
         </header>
 

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import VehicleCard from './components/VehicleCard.jsx';
 import CreateButton from './components/CreateButton.jsx';
 import SearchBar from './components/SearchBar.jsx';
-import { FaSearchengin } from 'react-icons/fa';
 import {useDebounce} from "react-use";
 
 const API = `${import.meta.env.VITE_API_URL}`;
@@ -15,7 +14,7 @@ export default function App() {
   const [debounceSearchValue, setDebounceSearchValue] = useState('')
 
 
-  useDebounce(()=> setDebounceSearchValue(searchValue), 500, [searchValue] )
+  useDebounce(()=> setDebounceSearchValue(searchValue), 1000, [searchValue] )
 
   const fetchVehicles = async () => {
     try {
